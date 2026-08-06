@@ -29,6 +29,7 @@ class Todo extends Store {
   }
 
   render() {
+    console.log("Rendering todo list");
     if (!this.listElement) return;
     this.tasks = this.getTasks();
     this.vip = this.isVIP ? this.isVIP() : false;
