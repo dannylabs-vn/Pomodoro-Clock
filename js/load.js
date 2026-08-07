@@ -12,6 +12,9 @@ async function loadComponents() {
     components.map(async ({ id, path }) => {
       const res = await fetch(path);
       const html = await res.text();
+      if (id === "component-settings") {
+        console.log(html);
+      }
       const container = document.getElementById(id);
       if (container) container.innerHTML = html;
     }),

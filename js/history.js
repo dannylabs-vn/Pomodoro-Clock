@@ -26,8 +26,7 @@ class History extends Store {
         await fetch("./components/History/nohistory.html")
       ).text();
       if (!currentUser) {
-        document.getElementById("no-history-text").textContent +=
-          " (log in để lưu lịch sử)";
+        document.getElementById("hide").hidden = false;
       }
       return;
     }
