@@ -1,4 +1,3 @@
-import {App} from "./app.js";
 async function loadComponents() {
   const components = [
     { id: "component-header", path: "./components/Header/header.html" },
@@ -7,7 +6,6 @@ async function loadComponents() {
     { id: "component-settings", path: "./components/Settings/settings.html" },
     { id: "component-todo", path: "./components/Todo/todo.html" },
     { id: "component-history", path: "./components/History/history.html" },
-
   ];
 
   await Promise.all(
@@ -18,17 +16,6 @@ async function loadComponents() {
       if (container) container.innerHTML = html;
     }),
   );
-}
-
-async function init() {
-  await loadComponents();
-  new App();
-}
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", init);
-} else {
-  init();
 }
 
 export { loadComponents };
