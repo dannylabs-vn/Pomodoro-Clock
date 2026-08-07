@@ -2,7 +2,7 @@ import { auth } from "./auth.js";
 import { Timer } from "./timer.js";
 import { History } from "./history.js";
 import { Todo } from "./todo.js";
-import {  } from "./load.js";
+import { loadComponents } from "./load.js";
 
 class Settings {
   font = "'Kumbh Sans', sans-serif";
@@ -144,12 +144,10 @@ class Modal {
   }
 
   todoModal() {
-    this.bind("btn-todo", "close-todo-btn", "todo-modal", () =>
-     {
+    this.bind("btn-todo", "close-todo-btn", "todo-modal", () => {
       console.log("Rendering todo modal");
-       this.todo.render()
-     }
-    );
+      this.todo.render();
+    });
   }
 
   bind(openId, closeId, modalId, onOpen) {
@@ -222,64 +220,15 @@ class App {
   }
 }
 
-// async function loadComponents() {
-//   const components = [
-//     { id: "component-header", path: "./components/Header/header.html" },
-//     { id: "component-display", path: "./components/Display/display.html" },
-//     { id: "component-sidebar", path: "./components/Sidebar/sidebar.html" },
-//     { id: "component-settings", path: "./components/Settings/settings.html" },
-//   ];
+async function init() {
+  await loadComponents();
+  new App();
+}
 
-//   await Promise.all(
-//     components.map(async ({ id, path }) => {
-//       const res = await fetch(path);
-//       const html = await res.text();
-//       const container = document.getElementById(id);
-//       if (container) container.innerHTML = html;
-//     }),
-//   );
-// }
-
-// async function init() {
-//   await loadComponents();
-//   new App();
-// }
-
-// if (document.readyState === "loading") {
-//   document.addEventListener("DOMContentLoaded", init);
-// } else {
-//   init();
-// }
-
-// async function loadComponents() {
-//   const components = [
-//     { id: "component-header", path: "./components/Header/header.html" },
-//     { id: "component-display", path: "./components/Display/display.html" },
-//     { id: "component-sidebar", path: "./components/Sidebar/sidebar.html" },
-//     { id: "component-settings", path: "./components/Settings/settings.html" },
-//   ];
-
-//   await Promise.all(
-//     components.map(async ({ id, path }) => {
-//       const res = await fetch(path);
-//       const html = await res.text();
-//       const container = document.getElementById(id);
-//       if (container) container.innerHTML = html;
-//     }),
-//   );
-// }
-
-// async function init() {
-//   await loadComponents();
-//   new App();
-// }
-
-// if (document.readyState === "loading") {
-//   document.addEventListener("DOMContentLoaded", init);
-// } else {
-//   init();
-// }
-
-// export { loadComponents, init };
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
 
 export { App };

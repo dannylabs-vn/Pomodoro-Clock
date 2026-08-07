@@ -15,12 +15,20 @@ class History extends Store {
     return this.loadData();
   }
 
-  renderHistory(container, currentUser) {
+  // renderHistory(container, currentUser) {
+  async renderHistory(container, currentUser) {
     if (!container) return;
     const history = this.getHistory();
 
     if (history.length === 0) {
-      container.innerHTML = `<tr><td colspan="3" style="text-align:center;opacity:.5">Chưa có lịch sử${currentUser ? "" : " (log in để lưu lịch sử)"}</td></tr>`;
+      // container.innerHTML = `<tr><td colspan="3" style="text-align:center;opacity:.5">Chưa có lịch sử${currentUser ? "" : " (log in để lưu lịch sử)"}</td></tr>`;
+      container.innerHTML = await (
+        await fetch("./components/History/nohistory.html")
+      ).text();
+      if (!currentUser) {
+        document.getElementById("no-history-text").textContent +=
+          " (log in để lưu lịch sử)";
+      }
       return;
     }
 
