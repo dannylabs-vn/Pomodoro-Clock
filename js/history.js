@@ -20,7 +20,7 @@ class History extends Store {
     if (!container) return;
     const history = this.getHistory();
 
-      // container.innerHTML = `<tr><td colspan="3" style="text-align:center;opacity:.5">Chưa có lịch sử${currentUser ? "" : " (log in để lưu lịch sử)"}</td></tr>`;
+    // container.innerHTML = `<tr><td colspan="3" style="text-align:center;opacity:.5">Chưa có lịch sử${currentUser ? "" : " (log in để lưu lịch sử)"}</td></tr>`;
 
     if (history.length === 0) {
       container.innerHTML = await (
@@ -31,7 +31,7 @@ class History extends Store {
       }
       return;
     }
-    
+
     container.innerHTML = history
       .map(
         (item) => `

@@ -1,10 +1,10 @@
-import { auth } from "./auth.js";
+import { auth } from './auth.js';
 
 const $ = (id) => document.getElementById(id);
 
 class Login {
   constructor() {
-    this.redirectUrl = new URLSearchParams(location.search).get("redirect") || "index.html";
+    this.redirectUrl = new URLSearchParams(location.search).get('redirect') || 'index.html';
     this.setup();
   }
 
@@ -16,66 +16,71 @@ class Login {
   }
 
   modal() {
-    $("login-modal")?.showModal();
-    $("login-username")?.focus();
+    $('login-modal')?.showModal();
+    $('login-username')?.focus();
   }
 
   close() {
-    $("close-login")?.addEventListener("click", () => {
+    $('close-login')?.addEventListener('click', () => {
       location.href = this.redirectUrl;
     });
   }
 
   toggleBtn() {
-    $("toggle-register")?.addEventListener("click", () => this.toggleMode());
+    $('toggle-register')?.addEventListener('click', () => this.toggleMode());
   }
 
-  
   form() {
-    $("login-form")?.addEventListener("submit", (event) => {
+    $('login-form')?.addEventListener('submit', async (event) => {
       event.preventDefault();
-      this.username = $("login-username")?.value.trim() || "";
-      this.password = $("login-password")?.value || "";
-      this.errorEl = $("login-error");
-      if (this.errorEl) this.errorEl.textContent = "";
 
-      this.mode = $("login-submit")?.dataset.mode || "login";
-      this.actions = {
-        register: () => auth.register(this.username, this.password) ? null : "Tên đăng nhập đã tồn tại.",
-        login: () => auth.login(this.username, this.password) ? null : "Sai tên đăng nhập hoặc mật khẩu.",
+      const username  = $('login-username')?.value.trim() || '';
+      const password  = $('login-password')?.value || '';
+      const errorEl   = $('login-error');
+      const submitBtn = $('login-submit');
+      const mode      = submitBtn?.dataset.mode || 'login';
+
+      if (errorEl) errorEl.textContent = '';
+
+      // Disable nút trong khi gọi API
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Đang xử lý...'; }
+
+      const actions = {
+        login:    () => auth.login(username, password),
+        register: () => auth.register(username, password),
       };
+      const result = await actions[mode]();
 
-      this.error = this.actions[this.mode]();
-      if (!this.error) {
+      // Khôi phục nút
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = mode === 'login' ? 'Đăng nhập' : 'Tạo tài khoản';
+      }
+
+      if (result === true) {
         location.href = this.redirectUrl;
         return;
       }
-      if (this.errorEl) this.errorEl.textContent = this.error;
-      $("login-form")?.reset();
+      if (errorEl) errorEl.textContent = result;
+      $('login-form')?.reset();
     });
   }
 
   toggleMode() {
-    this.submitBtn = $("login-submit");
-    this.isRegistering = this.submitBtn?.dataset.mode === "register";
-    this.targetMode = this.isRegistering ? "login" : "register";
+    const submitBtn     = $('login-submit');
+    const isRegistering = submitBtn?.dataset.mode === 'register';
+    const targetMode    = isRegistering ? 'login' : 'register';
 
-    this.modes = {
-      login: { title: "Đăng nhập", submit: "Đăng nhập", toggle: "Chưa có tài khoản? Tạo tài khoản mới" },
-      register: { title: "Tạo tài khoản", submit: "Tạo tài khoản", toggle: "Đã có tài khoản? Đăng nhập" },
+    const modes = {
+      login:    { title: 'Đăng nhập',    submit: 'Đăng nhập',    toggle: 'Chưa có tài khoản? Tạo tài khoản mới' },
+      register: { title: 'Tạo tài khoản', submit: 'Tạo tài khoản', toggle: 'Đã có tài khoản? Đăng nhập' },
     };
+    const cfg = modes[targetMode];
 
-    this.cfg = this.modes[this.targetMode];
-    if (this.submitBtn) {
-      this.submitBtn.dataset.mode = this.targetMode;
-      this.submitBtn.textContent = this.cfg.submit;
-    }
-    this.titleEl = $("login-title");
-    if (this.titleEl) this.titleEl.textContent = this.cfg.title;
-    this.toggleEl = $("toggle-register");
-    if (this.toggleEl) this.toggleEl.textContent = this.cfg.toggle;
-    this.errorEl = $("login-error");
-    if (this.errorEl) this.errorEl.textContent = "";
+    if (submitBtn) { submitBtn.dataset.mode = targetMode; submitBtn.textContent = cfg.submit; }
+    const titleEl = $('login-title'); if (titleEl) titleEl.textContent = cfg.title;
+    const toggleEl = $('toggle-register'); if (toggleEl) toggleEl.textContent = cfg.toggle;
+    const errorEl = $('login-error'); if (errorEl) errorEl.textContent = '';
   }
 }
 
