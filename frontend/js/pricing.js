@@ -1,4 +1,4 @@
-import { auth } from '../../backend/auth.js';
+import { auth } from './auth.js';
 
 class Pricing {
   constructor() {

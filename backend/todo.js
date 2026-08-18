@@ -10,7 +10,14 @@ function escapeHtml(value = "") {
 }
 
 class Todo {
-  constructor({ getCurrentUser, isVIP, listElement, formElement, textInput, cyclesInput }) {
+  constructor({
+    getCurrentUser,
+    isVIP,
+    listElement,
+    formElement,
+    textInput,
+    cyclesInput,
+  }) {
     this.getCurrentUser = getCurrentUser;
     this.isVIP = isVIP;
     this.listElement = listElement;
@@ -46,7 +53,9 @@ class Todo {
     const vip = this.isVIP ? this.isVIP() : false;
     const user = this.getCurrentUser ? this.getCurrentUser() : null;
     this.toggleInputs(vip);
-    this.tasks.length === 0 ? this.renderEmpty(vip, user) : this.renderList(vip);
+    this.tasks.length === 0
+      ? this.renderEmpty(vip, user)
+      : this.renderList(vip);
   }
 
   toggleInputs(vip) {
@@ -63,9 +72,11 @@ class Todo {
     if (vip) {
       msg = "Chưa có việc nào. Thêm việc và đặt số vòng pomodoro để bắt đầu!";
     } else if (currentUser) {
-      msg = 'Nâng cấp VIP để sử dụng tính năng danh sách việc! <a href="pricing.html" style="color: var(--primary-color); text-decoration: underline;">Nâng cấp ngay</a>';
+      msg =
+        'Nâng cấp VIP để sử dụng tính năng danh sách việc! <a href="pricing.html" style="color: var(--primary-color); text-decoration: underline;">Nâng cấp ngay</a>';
     } else {
-      msg = 'Vui lòng đăng nhập và nâng cấp VIP để sử dụng tính năng danh sách việc! <a href="login.html" style="color: var(--primary-color); text-decoration: underline;">Đăng nhập</a>';
+      msg =
+        'Vui lòng đăng nhập và nâng cấp VIP để sử dụng tính năng danh sách việc! <a href="login.html" style="color: var(--primary-color); text-decoration: underline;">Đăng nhập</a>';
     }
     this.listElement.innerHTML = `<li class="todo-empty">${msg}</li>`;
   }
@@ -82,7 +93,7 @@ class Todo {
           </div>
           <button type="button" class="todo-delete" data-index="${index}" aria-label="Xóa" ${vip ? "" : "disabled"}>×</button>
         </li>
-      `
+      `,
       )
       .join("");
   }
@@ -122,7 +133,7 @@ class Todo {
     }
   }
 
-  advance() {
+  sovong() {
     if (this.checkVIP()) return;
     const tasks = this.getTasks();
     const activeTask = tasks.find((t) => !t.done);
