@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gói Đăng Ký - Pomodoro Clock</title>
+  <link rel="stylesheet" href="pricing.css" />
+</head>
+
+<body>
+  <button id="back-btn" class="back-button" type="button" onclick="window.location.href = 'index.html'">
+    &larr; Quay lại
+  </button>
+
+  <div class="header">
+    <h1>Chọn Gói của Bạn</h1>
+    <p class="subtitle" id="pricing-status">
+      Đăng nhập để mở khóa tất cả tính năng
+    </p>
+
+    <div class="toggle-container">
+      <span>Annually</span>
+      <div class="toggle-wrapper">
+        <input type="checkbox" id="pricing-toggle" class="toggle-checkbox" checked />
+        <label for="pricing-toggle" class="toggle-label"></label>
+      </div>
+      <span>Monthly</span>
+    </div>
+  </div>
+
+  <div class="cards cards-container" id="pricing-cards">
+    <div class="card basic">
+      <h2>Thường</h2>
+      <div class="price annually">Miễn Phí</div>
+      <div class="price monthly">Miễn Phí</div>
+      <ul class="features">
+        <li>Timer Pomodoro cơ bản</li>
+        <li>Tùy chỉnh thời gian</li>
+        <li>Themes &amp; Fonts</li>
+      </ul>
+      <button class="btn guest-plan-btn">Hiện tại</button>
+    </div>
+
+    <div class="card professional">
+      <h2>VIP</h2>
+      <div class="price annually">
+        <span>$</span>99.99<span class="month-text">/năm</span>
+      </div>
+      <div class="price monthly">
+        <span>$</span>9.99<span class="month-text">/tháng</span>
+      </div>
+      <ul class="features">
+        <li>Mọi tính năng Thường</li>
+        <li>Todo List không giới hạn</li>
+        <li>Lịch sử chi tiết</li>
+        <li>Đồng bộ hóa dữ liệu</li>
+        <li>Ưu tiên hỗ trợ</li>
+      </ul>
+      <button class="btn upgrade-btn">Nâng cấp VIP</button>
+    </div>
+  </div>
+
+  <script type="module" src="./js/pricing.js"></script>
+</body>
+
+</html>
