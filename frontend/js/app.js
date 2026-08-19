@@ -15,13 +15,20 @@ class Settings {
   }
 
   setup() {
-    this.bind(".font-btn", (btn) => (this.font = btn.style.fontFamily || this.font));
-    this.bind(".color-btn", (btn) => (this.color = btn.style.backgroundColor || this.color));
+    this.bind(
+      ".font-btn",
+      (btn) => (this.font = btn.style.fontFamily || this.font),
+    );
+    this.bind(
+      ".color-btn",
+      (btn) => (this.color = btn.style.backgroundColor || this.color),
+    );
     $("settings-form")?.addEventListener("submit", (e) => {
       e.preventDefault();
-      const val = (id, def) => parseInt($(id)?.value, 10) || def;
+      const val = (id, def) => parseFloat($(id)?.value) || def;
+      console.log(val);
       this.onSave?.({
-        pomodoro: val("pomodoro-time", 25),
+        pomodoro: val("pomodoro-time", 0.1),
         short: val("short-time", 5),
         long: val("long-time", 15),
       });
@@ -34,8 +41,11 @@ class Settings {
   bind(selector, callback) {
     $$(selector).forEach((btn) =>
       btn.addEventListener("click", () => {
-        document.querySelector(`${selector}.active`)?.classList.remove("active");
+        document
+          .querySelector(`${selector}.active`)
+          ?.classList.remove("active");
         btn.classList.add("active");
+        console.log("som");
         callback(btn);
       }),
     );
@@ -81,7 +91,9 @@ class Modal {
     this.bind("btn-history", "close-history", "history-modal", () => {
       this.history.renderHistory($("history-body"));
     });
-    this.bind("btn-todo", "close-todo-btn", "todo-modal", () => this.todo.render());
+    this.bind("btn-todo", "close-todo-btn", "todo-modal", () =>
+      this.todo.render(),
+    );
   }
 
   bind(openId, closeId, modalId, onOpen) {

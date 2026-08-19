@@ -7,6 +7,7 @@ class Timer {
     this.config = { ...initialConfig };
     this.currentMode = "pomodoro";
     this.totalTime = this.config.pomodoro * 60;
+    console.log(this.config.pomodoro, this.totalTime);
     this.timeLeft = this.totalTime;
     this.timerId = null;
     this.isRunning = false;
@@ -100,6 +101,7 @@ class Timer {
   }
 
   setConfig(newConfig) {
+    console.log(newConfig);
     this.config = { ...this.config, ...newConfig };
     this.totalTime = this.config[this.currentMode] * 60;
     this.timeLeft = this.totalTime;

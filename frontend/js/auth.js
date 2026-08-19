@@ -34,8 +34,10 @@ class Auth {
       const data = await res.json();
       if (!res.ok) return data.message || "Sai tên đăng nhập hoặc mật khẩu";
 
-      const name = data.user_name || (data.user && data.user.user_name) || user_name;
-      const id = data.user_id || (data.user && data.user.user_id) || data.userId;
+      const name =
+        data.user_name || (data.user && data.user.user_name) || user_name;
+      const id =
+        data.user_id || (data.user && data.user.user_id) || data.userId;
       const isVip = data.is_vip || (data.user && data.user.is_vip);
 
       localStorage.setItem(USER_KEY, name);
@@ -63,7 +65,7 @@ class Auth {
       const data = await res.json();
       if (!res.ok) return data.message || "Đăng ký thất bại";
 
-      const id = typeof data === "number" ? data : (data.user_id || data.userId);
+      const id = typeof data === "number" ? data : data.user_id || data.userId;
       localStorage.setItem(USER_KEY, user_name);
       if (id) localStorage.setItem(USER_ID_KEY, String(id));
       return true;
