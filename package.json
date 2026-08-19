@@ -1,6 +1,7 @@
 {
   "name": "pomodoro-clock",
   "version": "1.0.0",
+  "type": "module",
   "main": "backend/db.js",
   "dependencies": {
     "cors": "^2.8.6",

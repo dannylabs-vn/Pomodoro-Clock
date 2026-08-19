@@ -1,4 +1,4 @@
-const db = require("./db.js");
+import db from "./db.js";
 
 class todoDB {
   async getTodo(user_id) {
@@ -29,4 +29,4 @@ class todoDB {
   }
 }
 
-module.exports = new todoDB();
+export default new todoDB();

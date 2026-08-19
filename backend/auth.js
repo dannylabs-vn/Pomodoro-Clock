@@ -1,4 +1,4 @@
-const db = require("./db.js");
+import db from "./db.js";
 
 class Auth {
   async register(user_name, user_password) {
@@ -29,4 +29,4 @@ class Auth {
   }
 }
 
-module.exports = new Auth();
+export default new Auth();

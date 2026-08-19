@@ -1,9 +1,9 @@
-const express = require("express");
-const cors = require("cors");
+import express from "express";
+import cors from "cors";
 
-const auth = require("./auth.js");
-const todo = require("./todo_db.js");
-const his = require("./his_db.js");
+import auth from "./auth.js";
+import todo from "./todo_db.js";
+import his from "./his_db.js";
 
 const app = express();
 const port = 5000;

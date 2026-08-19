@@ -1,4 +1,5 @@
-const { Pool } = require("pg");
+import pg from "pg";
+const { Pool } = pg;
 
 class Database {
   constructor() {
@@ -32,5 +33,5 @@ class Database {
   }
 }
 
-module.exports = new Database();
+export default new Database();
 

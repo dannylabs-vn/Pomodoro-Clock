@@ -1,4 +1,4 @@
-const db = require("./db.js");
+import db from "./db.js";
 
 class HistoryDB {
   async getHistory(user_id) {
@@ -19,4 +19,4 @@ class HistoryDB {
   }
 }
 
-module.exports = new HistoryDB();
+export default new HistoryDB();
