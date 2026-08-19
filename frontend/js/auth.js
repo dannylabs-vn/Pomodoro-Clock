@@ -1,65 +1,103 @@
-const USER_KEY = 'pomodoroCurrentUser';
-const VIP_PREFIX = 'userVIP_';
-const API_URL = 'http://localhost:3000/api/auth';
+const USER_KEY = "pomodoroCurrentUser";
+const USER_ID_KEY = "pomodoroCurrentUserId";
+const VIP_PREFIX = "userVIP_";
+const API_URL = "http://localhost:5000";
 
 class Auth {
   getCurrentUser() {
     return localStorage.getItem(USER_KEY);
   }
 
-  isUserVIP(username = this.getCurrentUser()) {
-    if (!username) return false;
-    return localStorage.getItem(`${VIP_PREFIX}${username}`) === 'true';
+  getUserId() {
+    return localStorage.getItem(USER_ID_KEY);
+  }
+
+  isUserVIP(user_name = this.getCurrentUser()) {
+    if (!user_name) return false;
+    return localStorage.getItem(`${VIP_PREFIX}${user_name}`) === "true";
   }
 
   getAuthState() {
     const user = this.getCurrentUser();
-    return { user, isVIP: this.isUserVIP(user) };
+    const userId = this.getUserId();
+    return { user, userId, isVIP: this.isUserVIP(user) };
   }
 
-  async login(username, password) {
-    if (!username || !password) return 'Vui long nhap day du thong tin';
+  async login(user_name, user_password) {
+    if (!user_name || !user_password) return "Vui lòng nhập đầy đủ thông tin";
     try {
       const res = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_name, user_password }),
       });
       const data = await res.json();
-      if (!res.ok) return data.error || 'Sai ten dang nhap hoac mat khau';
+      if (!res.ok) return data.message || "Sai tên đăng nhập hoặc mật khẩu";
 
-      localStorage.setItem(USER_KEY, data.user.user_name);
-      if (data.user.is_vip) {
-        localStorage.setItem(`${VIP_PREFIX}${data.user.user_name}`, 'true');
+      const name = data.user_name || (data.user && data.user.user_name) || user_name;
+      const id = data.user_id || (data.user && data.user.user_id) || data.userId;
+      const isVip = data.is_vip || (data.user && data.user.is_vip);
+
+      localStorage.setItem(USER_KEY, name);
+      if (id) localStorage.setItem(USER_ID_KEY, String(id));
+
+      if (isVip) {
+        localStorage.setItem(`${VIP_PREFIX}${name}`, "true");
       } else {
-        localStorage.removeItem(`${VIP_PREFIX}${data.user.user_name}`);
+        localStorage.removeItem(`${VIP_PREFIX}${name}`);
       }
       return true;
     } catch {
-      return 'Khong the ket noi Backend Server (Chay: node backend/server.js)';
+      return "Không thể kết nối Backend Server (Chạy: node backend/server.js)";
     }
   }
 
-  async register(username, password) {
-    if (!username || !password) return 'Vui long nhap day du thong tin';
+  async register(user_name, user_password) {
+    if (!user_name || !user_password) return "Vui lòng nhập đầy đủ thông tin";
     try {
       const res = await fetch(`${API_URL}/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_name, user_password }),
       });
       const data = await res.json();
-      if (!res.ok) return data.error || 'Dang ky that bai';
+      if (!res.ok) return data.message || "Đăng ký thất bại";
 
-      localStorage.setItem(USER_KEY, username);
+      const id = typeof data === "number" ? data : (data.user_id || data.userId);
+      localStorage.setItem(USER_KEY, user_name);
+      if (id) localStorage.setItem(USER_ID_KEY, String(id));
       return true;
     } catch {
-      return 'Khong the ket noi Backend Server (Chay: node backend/server.js)';
+      return "Không thể kết nối Backend Server (Chạy: node backend/server.js)";
+    }
+  }
+
+  async upgradeToVIP(user_name = this.getCurrentUser()) {
+    if (!user_name) return false;
+
+    try {
+      const res = await fetch(`${API_URL}/upgrade`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_name }),
+      });
+
+      if (!res.ok) return false;
+
+      localStorage.setItem(`${VIP_PREFIX}${user_name}`, "true");
+      return true;
+    } catch {
+      return false;
     }
   }
 
   logout() {
+    const user = this.getCurrentUser();
+    if (user) {
+      localStorage.removeItem(`${VIP_PREFIX}${user}`);
+    }
     localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(USER_ID_KEY);
   }
 }
 

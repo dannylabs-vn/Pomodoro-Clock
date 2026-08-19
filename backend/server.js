@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 
 const auth = require("./auth.js");
+const todo = require("./todo_db.js");
+const his = require("./his_db.js");
 
 const app = express();
 const port = 5000;
@@ -9,27 +11,71 @@ const port = 5000;
 app.use(cors());
 app.use(express.json());
 
-app.post("/register", async (req,res) => {
-  const { username, password } = req.body;
-
-  await auth.register(username, password);
-  res.json({ message: " Bạn đã đăng ký thành công" });
+app.post("/register", async (req, res) => {
+  const { user_name, user_password } = req.body;
+  const user = await auth.register(user_name, user_password);
+  res.json(user);
 });
 
-app.post("/login", async (req,res) => {
-  const { username, password } = req.body;
-  const user = await auth.login(username, password);
+
+app.post("/login", async (req, res) => {
+  const { user_name, user_password } = req.body;
+  const user = await auth.login(user_name, user_password);
   if (user) {
-    res.json({ message: "Đăng nhập thành công", user });
+    res.json(user);
   } else {
     res.status(401).json({ message: "Tên đăng nhập hoặc mật khẩu không đúng" });
   }
 });
 
-app.post("/logout", async (req,res) => {
+
+app.post("/logout", (req, res) => {
   auth.logout();
   res.json({ message: "Đăng xuất thành công" });
 });
+
+
+app.post("/upgrade", async (req, res) => {
+  const { user_name } = req.body;
+  const upgrade = await auth.upgradeToVIP(user_name);
+  res.json(upgrade);
+});
+
+
+app.get("/getTodo/:user_id", async (req, res) => {
+  const { user_id } = req.params;
+  const todos = await todo.getTodo(user_id);
+  res.json(todos);
+});
+
+
+app.post("/addTodo", async (req, res) => {
+  const { user_id, todo_task, chu_ky } = req.body;
+  const add = await todo.addTodo(user_id, todo_task, chu_ky);
+  res.json(add);
+});
+
+
+app.delete("/deleteTodo/:todo_id", async (req, res) => {
+  const { todo_id } = req.params;
+  const del = await todo.deleteTodo(todo_id);
+  res.json(del);
+});
+
+
+app.get("/getHistory/:user_id", async (req, res) => {
+  const { user_id } = req.params;
+  const histo = await his.getHistory(user_id);
+  res.json(histo);
+});
+
+
+app.post("/addHistory", async (req, res) => {
+  const { user_id, his_date, so_vong } = req.body;
+  const add = await his.addHistory(user_id, his_date, so_vong);
+  res.json(add);
+});
+
 
 app.listen(port, () => {
   console.log(`Server dang chay o port ${port}`);

@@ -1,4 +1,4 @@
-import { Store } from "./store.js";
+const API_URL = "http://localhost:5000";
 
 function escapeHtml(value = "") {
   return String(value)
@@ -11,6 +11,7 @@ function escapeHtml(value = "") {
 
 class Todo {
   constructor({
+    getUserId,
     getCurrentUser,
     isVIP,
     listElement,
@@ -18,13 +19,13 @@ class Todo {
     textInput,
     cyclesInput,
   }) {
+    this.getUserId = getUserId;
     this.getCurrentUser = getCurrentUser;
     this.isVIP = isVIP;
     this.listElement = listElement;
     this.formElement = formElement;
     this.textInput = textInput;
     this.cyclesInput = cyclesInput;
-    this.store = new Store("pomodoroTodo", getCurrentUser);
     this.tasks = [];
     this.init();
   }
@@ -33,26 +34,31 @@ class Todo {
     return this.isVIP && !this.isVIP();
   }
 
-  getTasks() {
-    if (!this.getCurrentUser?.()) return [];
+  async getTasks() {
+    const userId = this.getUserId?.();
+    if (!userId) return [];
     try {
-      const data = this.store.loadData();
+      const res = await fetch(`${API_URL}/getTodo/${userId}`);
+      if (!res.ok) return [];
+      const data = await res.json();
       return Array.isArray(data) ? data : [];
     } catch {
       return [];
     }
   }
 
-  saveTasks(tasks) {
-    this.store.saveData(tasks);
-  }
-
-  render() {
+  async render() {
     if (!this.listElement) return;
-    this.tasks = this.getTasks();
     const vip = this.isVIP ? this.isVIP() : false;
     const user = this.getCurrentUser ? this.getCurrentUser() : null;
     this.toggleInputs(vip);
+
+    if (!user || !vip) {
+      this.renderEmpty(vip, user);
+      return;
+    }
+
+    this.tasks = await this.getTasks();
     this.tasks.length === 0
       ? this.renderEmpty(vip, user)
       : this.renderList(vip);
@@ -84,66 +90,50 @@ class Todo {
   renderList(vip) {
     this.listElement.innerHTML = this.tasks
       .map(
-        (task, index) => `
-        <li class="todo-item ${task.done ? "done" : ""}">
-          <input type="checkbox" class="todo-check" data-index="${index}" ${task.done ? "checked" : ""} ${vip ? "" : "disabled"} />
+        (task) => `
+        <li class="todo-item">
           <div class="todo-info">
-            <span class="todo-title">${escapeHtml(task.text)}</span>
-            <span class="todo-progress">${task.completedCycles}/${task.targetCycles} vòng pomodoro</span>
+            <span class="todo-title">${escapeHtml(task.todo_task)}</span>
+            <span class="todo-progress">${task.chu_ky} vòng pomodoro</span>
           </div>
-          <button type="button" class="todo-delete" data-index="${index}" aria-label="Xóa" ${vip ? "" : "disabled"}>×</button>
+          <button type="button" class="todo-delete" data-id="${task.todo_id}" aria-label="Xóa" ${vip ? "" : "disabled"}>×</button>
         </li>
       `,
       )
       .join("");
   }
 
-  add(text, targetCycles) {
+  async add(text, targetCycles) {
     if (this.checkVIP()) return;
-    const tasks = this.getTasks();
-    const newTask = {
-      id: Date.now().toString(),
-      text,
-      targetCycles,
-      completedCycles: 0,
-      done: false,
-    };
-    tasks.push(newTask);
-    this.saveTasks(tasks);
-    this.render();
-  }
+    const userId = this.getUserId?.();
+    if (!userId) return;
 
-  delete(index) {
-    if (this.checkVIP()) return;
-    const tasks = this.getTasks();
-    if (index >= 0 && index < tasks.length) {
-      tasks.splice(index, 1);
-      this.saveTasks(tasks);
-      this.render();
+    try {
+      await fetch(`${API_URL}/addTodo`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userId,
+          todo_task: text,
+          chu_ky: targetCycles,
+        }),
+      });
+      await this.render();
+    } catch (e) {
+      console.error(e);
     }
   }
 
-  toggle(index, done) {
+  async delete(todoId) {
     if (this.checkVIP()) return;
-    const tasks = this.getTasks();
-    if (tasks[index]) {
-      tasks[index].done = done;
-      this.saveTasks(tasks);
-      this.render();
+    try {
+      await fetch(`${API_URL}/deleteTodo/${todoId}`, {
+        method: "DELETE",
+      });
+      await this.render();
+    } catch (e) {
+      console.error(e);
     }
-  }
-
-  sovong() {
-    if (this.checkVIP()) return;
-    const tasks = this.getTasks();
-    const activeTask = tasks.find((t) => !t.done);
-    if (!activeTask) return;
-    activeTask.completedCycles = (activeTask.completedCycles || 0) + 1;
-    if (activeTask.completedCycles >= activeTask.targetCycles) {
-      activeTask.done = true;
-    }
-    this.saveTasks(tasks);
-    this.render();
   }
 
   init() {
@@ -153,7 +143,7 @@ class Todo {
 
   bindForm() {
     if (!this.formElement) return;
-    this.formElement.addEventListener("submit", (event) => {
+    this.formElement.addEventListener("submit", async (event) => {
       event.preventDefault();
       if (this.checkVIP()) {
         alert("Tính năng tạo danh sách việc chỉ dành cho tài khoản VIP!");
@@ -162,7 +152,7 @@ class Todo {
       const text = this.textInput?.value?.trim() || "";
       if (!text) return;
       const targetCycles = parseInt(this.cyclesInput?.value, 10) || 1;
-      this.add(text, targetCycles);
+      await this.add(text, targetCycles);
       if (this.textInput) this.textInput.value = "";
       if (this.cyclesInput) this.cyclesInput.value = 4;
     });
@@ -170,14 +160,12 @@ class Todo {
 
   bindList() {
     if (!this.listElement) return;
-    this.listElement.addEventListener("click", (event) => {
+    this.listElement.addEventListener("click", async (event) => {
       if (this.checkVIP()) return;
       const target = event.target;
-      const index = parseInt(target.dataset.index, 10);
       if (target.classList.contains("todo-delete")) {
-        this.delete(index);
-      } else if (target.classList.contains("todo-check")) {
-        this.toggle(index, target.checked);
+        const id = target.dataset.id;
+        if (id) await this.delete(id);
       }
     });
   }
