@@ -1,3 +1,4 @@
+// const db = require("./db.js");
 import db from "./db.js";
 
 class todoDB {
@@ -10,10 +11,6 @@ class todoDB {
   }
 
   async addTodo(user_id, todo_task, chu_ky) {
-    console.log(
-      "INSERT INTO todo (user_id, todo_task, chu_ky) VALUES ($1, $2, $3) RETURNING todo_id",
-      [user_id, todo_task, chu_ky],
-    );
     const response = await db.query(
       "INSERT INTO todo (user_id, todo_task, chu_ky) VALUES ($1, $2, $3) RETURNING todo_id",
       [user_id, todo_task, chu_ky],
@@ -29,4 +26,5 @@ class todoDB {
   }
 }
 
+// module.exports = new todoDB();
 export default new todoDB();

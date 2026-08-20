@@ -13,7 +13,7 @@ class Database {
       });
 
       this.pool.on("error", (err, client) => {
-        console.error("Unexpected error on idle client", err);
+        console.error("Lỗi client tren pool:", err);
         process.exit(-1);
       });
 
@@ -27,11 +27,11 @@ class Database {
       const response = await this.pool.query(text, params);
       return response;
     } catch (error) {
-      console.error("Database query error:", error);
+      console.error("Lỗi query database:", error);
       throw error;
     }
   }
 }
 
+// module.exports = new Database();
 export default new Database();
-

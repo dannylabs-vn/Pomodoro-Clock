@@ -1,3 +1,4 @@
+// const db = require("./db.js");
 import db from "./db.js";
 
 class HistoryDB {
@@ -10,7 +11,6 @@ class HistoryDB {
   }
 
   async addHistory(user_id, his_date, so_vong) {
-  
     const response = await db.query(
       "INSERT INTO history (user_id, his_date, so_vong) VALUES ($1, $2, $3) RETURNING history_id",
       [user_id, his_date, so_vong],

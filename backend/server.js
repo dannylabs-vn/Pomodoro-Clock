@@ -1,5 +1,11 @@
+// const express = require("express");
+// const cors = require("cors")
 import express from "express";
 import cors from "cors";
+
+// const auth = require("./auth.js");
+// const todo = require("./todo_db.js");
+// const his = require("./his_db.js");
 
 import auth from "./auth.js";
 import todo from "./todo_db.js";
@@ -17,7 +23,6 @@ app.post("/register", async (req, res) => {
   res.json(user);
 });
 
-
 app.post("/login", async (req, res) => {
   const { user_name, user_password } = req.body;
   const user = await auth.login(user_name, user_password);
@@ -28,12 +33,11 @@ app.post("/login", async (req, res) => {
   }
 });
 
-
 app.post("/logout", (req, res) => {
-  auth.logout();
+  const { user_name } = req.body || {};
+  auth.logout(user_name);
   res.json({ message: "Đăng xuất thành công" });
 });
-
 
 app.post("/upgrade", async (req, res) => {
   const { user_name } = req.body;
@@ -41,13 +45,11 @@ app.post("/upgrade", async (req, res) => {
   res.json(upgrade);
 });
 
-
 app.get("/getTodo/:user_id", async (req, res) => {
   const { user_id } = req.params;
   const todos = await todo.getTodo(user_id);
   res.json(todos);
 });
-
 
 app.post("/addTodo", async (req, res) => {
   const { user_id, todo_task, chu_ky } = req.body;
@@ -55,13 +57,11 @@ app.post("/addTodo", async (req, res) => {
   res.json(add);
 });
 
-
 app.delete("/deleteTodo/:todo_id", async (req, res) => {
   const { todo_id } = req.params;
   const del = await todo.deleteTodo(todo_id);
   res.json(del);
 });
-
 
 app.get("/getHistory/:user_id", async (req, res) => {
   const { user_id } = req.params;
@@ -69,13 +69,11 @@ app.get("/getHistory/:user_id", async (req, res) => {
   res.json(histo);
 });
 
-
 app.post("/addHistory", async (req, res) => {
   const { user_id, his_date, so_vong } = req.body;
   const add = await his.addHistory(user_id, his_date, so_vong);
   res.json(add);
 });
-
 
 app.listen(port, () => {
   console.log(`Server dang chay o port ${port}`);
