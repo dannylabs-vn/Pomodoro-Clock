@@ -1,7 +1,7 @@
 import { auth } from "./auth.js";
 import { Timer } from "./timer.js";
-import { History } from "../../backend/history.js";
-import { Todo } from "../../backend/todo.js";
+import { History } from "./history.js";
+import { Todo } from "./todo.js";
 import { loadComponents } from "./load.js";
 
 const $ = (id) => document.getElementById(id);

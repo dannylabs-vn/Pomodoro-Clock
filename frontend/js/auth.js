@@ -1,7 +1,12 @@
 const USER_KEY = "pomodoroCurrentUser";
 const USER_ID_KEY = "pomodoroCurrentUserId";
 const VIP_PREFIX = "userVIP_";
-const API_URL = "http://localhost:5000";
+const API_URL =
+  window.location.protocol === "file:" ||
+  (window.location.hostname === "localhost" && window.location.port !== "5000") ||
+  (window.location.hostname === "127.0.0.1" && window.location.port !== "5000")
+    ? "http://localhost:5000"
+    : "";
 
 class Auth {
   getCurrentUser() {
@@ -50,7 +55,7 @@ class Auth {
       }
       return true;
     } catch {
-      return "Không thể kết nối Backend Server (Chạy: node backend/server.js)";
+      return "Không thể kết nối Backend Server";
     }
   }
 
@@ -70,7 +75,7 @@ class Auth {
       if (id) localStorage.setItem(USER_ID_KEY, String(id));
       return true;
     } catch {
-      return "Không thể kết nối Backend Server (Chạy: node backend/server.js)";
+      return "Không thể kết nối Backend Server";
     }
   }
 
