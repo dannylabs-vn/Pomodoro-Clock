@@ -3,10 +3,12 @@ import db from "./db.js";
 
 class HistoryDB {
   async getHistory(user_id) {
+    console.log("GetHistory user_id:", user_id);
     const response = await db.query(
       "SELECT * FROM history WHERE user_id = $1 ORDER BY history_id ASC",
       [user_id],
     );
+    console.log("Lịch sử người dùng:", response.rows);
     return response.rows;
   }
 

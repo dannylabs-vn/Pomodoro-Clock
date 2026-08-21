@@ -7,12 +7,12 @@ class Auth {
       [user_name, user_password],
     );
     const user_id = result.rows[0].user_id;
-    console.log("Đăng ký thành công:", {
-      user_id,
-      user_name,
-      user_password,
-      thoi_gian: new Date().toLocaleString("vi-VN"),
-    });
+    // console.log("Đăng ký thành công:", {
+    //   user_id,
+    //   user_name,
+    //   user_password,
+    //   thoi_gian: new Date().toLocaleString("vi-VN"),
+    // });
     return user_id;
   }
 
@@ -22,14 +22,14 @@ class Auth {
       [user_name, user_password],
     );
     const user = response.rows[0];
-    if (user) {
-      console.log("Đăng nhập thành công:", {
-        user_name: user.user_name,
-        user_id: user.user_id,
-        is_vip: user.is_vip,
-        thoi_gian: new Date().toLocaleString("vi-VN"),
-      });
-    }
+    // if (user) {
+    //   console.log("Đăng nhập thành công:", {
+    //     user_name: user.user_name,
+    //     user_id: user.user_id,
+    //     is_vip: user.is_vip,
+    //     thoi_gian: new Date().toLocaleString("vi-VN"),
+    //   });
+    // }
     return user || null;
   }
 
@@ -37,12 +37,10 @@ class Auth {
     await db.query("UPDATE users SET is_vip = TRUE WHERE user_name = $1", [
       user_name,
     ]);
-    console.log(`${user_name} Đã nâng cấp VIP thành công`);
     return true;
   }
 
   logout(user_name) {
-    console.log(`${user_name} đã đăng xuất thành công`);
     return true;
   }
 }
